@@ -66,14 +66,41 @@ namespace videojuego2
             coordenada.Y = y;
         }
 
-        public string Atacar(personajes enemigo)
+        public void Atacar(personajes atacante, personajes atacado)//funciona
         {
-            return "";
+            atacante.capacidad_ataque = atacante.capacidad_ataque / 100;
+            if (atacado.energia > 0)
+            {
+               // return 4;//solo perdio energia
+                atacado.energia = atacado.energia - atacante.capacidad_ataque;
+            }
+            else
+            {
+
+                atacado.num_vidas -= 1;
+                if (atacado.num_vidas == 0)
+                {
+                   // return 1;//significa qeu murio del todo
+                }
+                else
+                {
+                   // return 2;//perdio una las vidas
+                }
+
+                //perio energia pero no vida
+            }
+        }
+
+        public string Moverse(int x, int y)//funciona
+        {
+            coordenada.X = x;
+            coordenada.Y = y;
+            return "se movio";
         }
 
        
 
-        public virtual string Ver_estadisticas()
+        public virtual string Ver_estadisticas()//funciona
         {
             return "nombre: " + nombre + "\nnumero de vidas: " + num_vidas +
                 "\ncapacidad de ataque: " + capacidad_ataque + "\nenergia: " + energia +
@@ -92,9 +119,9 @@ namespace videojuego2
         public int Pocimas { get => pocimas; set => pocimas = value; }
         public int Mana { get => mana; set => mana = value; }
 
-        public Magos():base("Mago", 3, 50, 100, 0, 10, new ubicacion(5,20))
+        public Magos():base("Mago", 3, 500, 100, 0, 10, new ubicacion(5,20))
         {
-
+            mana = 20;
         }
 
         public Magos(int ppocimas, int pmana)
@@ -103,7 +130,7 @@ namespace videojuego2
             this.mana = pmana;
         }
 
-        public bool Curarse()
+        public bool Curarse()//funciona//funciona
         {
             int cura;
             cura = level / 100;
@@ -121,10 +148,13 @@ namespace videojuego2
             }
         }
 
-        public bool Lanzar_hechizos()
+        public bool Lanzar_hechizos(personajes atacado)//funciona
         {
             if(mana > 10)
             {
+                atacado.Capacidad_ataque = 0;
+                mana-=10;
+
                 return true;//se muestra el mensaje de qeu lanzo el hechizo
             }
             else
@@ -155,20 +185,23 @@ namespace videojuego2
 
     class Guerreros:personajes
     {
-        string[] armas= new string[5];
+        string[] armas= new string[3];
 
-        public Guerreros():base("Mago", 3, 50, 100, 0, 10, new ubicacion(5,20))
+        public Guerreros():base("guerrero", 3, 50, 100, 0, 10, new ubicacion(5,20))
         {
 
         }
-        public string Aumentar_arsenal()
+        public void Aumentar_arsenal()//funciona
         {
-            return "el inventario de armas a sido expandido";
+            armas[0] = "espada";
+            armas[1] = "cuchillo";
+            armas[2] = "lanza";
         }
 
-        public override string Ver_estadisticas()
+        public override string Ver_estadisticas()//funciona
         {
-            return base.Ver_estadisticas() + "\narmas: " + armas;
+            return base.Ver_estadisticas() + "\narmas: " + armas[0] + ", " + armas[1] +
+                ", " + armas[2];
         }
 
     }
@@ -180,12 +213,12 @@ namespace videojuego2
 
         public Campesinos():base("campesino", 3, 50, 100, 0, 10, new ubicacion(5,20))
         {
-
+            capacidad_cosecha = 3;
+            cantidad_comida = 1;
         }
-        public int Cosechar()//aumenta la cantidad de comida 
+        public void Cosechar()//FUNCIONA
         {
             cantidad_comida =capacidad_cosecha *2;
-            return cantidad_comida;
         }
 
         public override string Ver_estadisticas()
