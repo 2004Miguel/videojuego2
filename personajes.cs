@@ -31,16 +31,16 @@ namespace videojuego2
         protected int num_vidas;
         ubicacion coordenada;
         int capacidad_ataque;
-        protected int energia;
+        protected float energia;
         int xp;
-        protected int level;
+        protected float level;
 
         public string Nombre { get => nombre; set => nombre = value; }
         public int Num_vidas { get => num_vidas; set => num_vidas = value; }
         public int Capacidad_ataque { get => capacidad_ataque; set => capacidad_ataque = value; }
-        public int Energia { get => energia; set => energia = value; }
+        public float Energia { get => energia; set => energia = value; }
         public int Xp { get => xp; set => xp = value; }
-        public int Level { get => level; set => level = value; }
+        public float Level { get => level; set => level = value; }
         internal ubicacion Coordenada { get => coordenada; set => coordenada = value; }
 
         public personajes()
@@ -49,7 +49,7 @@ namespace videojuego2
         }
 
         public personajes(string pnombre, int pnum_vidas, int pcapaciad_ataque,
-            int penergia, int pxp, int plevel, ubicacion pcoordenada)
+            int penergia, int pxp, float plevel, ubicacion pcoordenada)
         {
             nombre = pnombre;
             num_vidas = pnum_vidas;
@@ -66,7 +66,7 @@ namespace videojuego2
             coordenada.Y = y;
         }
 
-        public void Atacar(personajes atacante, personajes atacado)//funciona
+        public virtual void Atacar(personajes atacante, personajes atacado)//funciona
         {
             atacante.capacidad_ataque = atacante.capacidad_ataque / 100;
             if (atacado.energia > 0)
@@ -80,11 +80,8 @@ namespace videojuego2
                 atacado.num_vidas -= 1;
                 if (atacado.num_vidas == 0)
                 {
-                   // return 1;//significa qeu murio del todo
-                }
-                else
-                {
-                   // return 2;//perdio una las vidas
+                    // return 1;//significa qeu murio del todo
+                    atacado.energia = 100;
                 }
 
                 //perio energia pero no vida
@@ -119,32 +116,32 @@ namespace videojuego2
         public int Pocimas { get => pocimas; set => pocimas = value; }
         public int Mana { get => mana; set => mana = value; }
 
-        public Magos():base("Mago", 3, 500, 100, 0, 10, new ubicacion(5,20))
+        public Magos():base("Mago", 3, 500, 90, 0, 10, new ubicacion(5,20))
         {
+            mana = 20;
+            pocimas = 3;
             mana = 20;
         }
 
-        public Magos(int ppocimas, int pmana)
+        public string Curarse()//funciona//funciona
         {
-            this.pocimas = ppocimas;
-            this.mana = pmana;
-        }
-
-        public bool Curarse()//funciona//funciona
-        {
-            int cura;
+            float cura;
+            float suma;
             cura = level / 100;
             if(pocimas > 0 && energia > 0 && energia < 100 && num_vidas > 0)
             {
-                energia = energia + cura;
+                suma = energia * cura + energia;//energia + cura;
+                energia = suma;
                 pocimas = pocimas - 1;
-                return true;// se pudo curar
+                return "esta es cura: " + cura;
+               // return true;// se pudo curar
 
             }
             else
             {
-                return false;//no se pudo curar porque no tenia pocimas o
+                // return false;//no se pudo curar porque no tenia pocimas o
                 //la energia estaba al max o no tnia vidas suficientes 
+                return "lo que sea: ";
             }
         }
 
@@ -172,9 +169,15 @@ namespace videojuego2
     class Arqueros:personajes
     {
         int cantidad_flechas;
-        public Arqueros():base("Arqueros", 3, 80, 100, 0, 7, new ubicacion(5,20))
+        public Arqueros():base("Arqueros", 3, 300, 100, 0, 7, new ubicacion(5,20))
         {
+            cantidad_flechas = 5;
+        }
 
+        public override void Atacar(personajes atacante, personajes atacado)//funciona
+        {
+            base.Atacar(atacante, atacado);
+            cantidad_flechas -= 1;
         }
         public override string Ver_estadisticas()
         {
@@ -185,23 +188,33 @@ namespace videojuego2
 
     class Guerreros:personajes
     {
-        string[] armas= new string[3];
-
+        //string[] armas= new string[3];
+        int espada = 0;
+        int daga = 0;
+        int hacha = 0;
         public Guerreros():base("guerrero", 3, 50, 100, 0, 10, new ubicacion(5,20))
         {
 
         }
-        public void Aumentar_arsenal()//funciona
+        public void Aumentar_arsenal(int arma)//funciona
         {
-            armas[0] = "espada";
-            armas[1] = "cuchillo";
-            armas[2] = "lanza";
+            //armas[0] = "espada";
+            //armas[1] = "daga";
+            //armas[2] = "hacha";
+            if (arma == 1)
+                espada += 1;
+
+            if (arma == 2)
+                daga += 1;
+
+            if (arma == 3)
+                hacha += 1;
         }
 
         public override string Ver_estadisticas()//funciona
         {
-            return base.Ver_estadisticas() + "\narmas: " + armas[0] + ", " + armas[1] +
-                ", " + armas[2];
+            return base.Ver_estadisticas() + "\narmas: " + "\nespada: " + espada + "\ndaga:" +
+                daga + "\nhacha: " + hacha;
         }
 
     }
@@ -219,6 +232,7 @@ namespace videojuego2
         public void Cosechar()//FUNCIONA
         {
             cantidad_comida =capacidad_cosecha *2;
+            
         }
 
         public override string Ver_estadisticas()
